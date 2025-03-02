@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -7,11 +8,66 @@ public class GameVisualManager : NetworkBehaviour
     
     [SerializeField] private Transform _crossPrefab;
     [SerializeField] private Transform _circlePrefab;
+    [SerializeField] private Transform _lineCompletePrefab;
 
+    private List<GameObject> _visualGameObjectsList;
+
+    private void Awake()
+    {
+        _visualGameObjectsList = new List<GameObject>();
+    }
 
     private void Start()
     {
         GameManager.Instance.OnClickedGridPosition += GameManager_OnClickedGridPosition;
+        GameManager.Instance.OnGameWin += GameManager_OnGameWin;
+        GameManager.Instance.OnRematch += GameManager_OnRematch;
+    }
+
+    private void GameManager_OnRematch(object sender, System.EventArgs e)
+    {
+        if (!NetworkManager.Singleton.IsServer)
+        {
+            return;
+        }
+
+        foreach (var visualObject in _visualGameObjectsList)
+        {
+            Destroy(visualObject);
+        }
+
+        _visualGameObjectsList.Clear();
+    }
+
+    private void GameManager_OnGameWin(object sender, GameManager.OnGameWinEventArgs e)
+    {
+        if (!NetworkManager.Singleton.IsServer)
+        {
+            return;
+        }
+
+        float eulerZ = 0f;
+
+        switch (e.line.orientation)
+        {
+            default:
+            case GameManager.Orientation.Horizontal:
+                eulerZ = 0f;
+                break;
+            case GameManager.Orientation.Vertical:
+                eulerZ = 90f;
+                break;
+            case GameManager.Orientation.DiagonalA:
+                eulerZ = 45f;
+                break;
+            case GameManager.Orientation.DiagonalB:
+                eulerZ = -45f;
+                break;
+        }
+        var lineCompleteTransform = Instantiate(_lineCompletePrefab, GetGridWorldPosition(e.line.centerGridPosition.x, e.line.centerGridPosition.y), Quaternion.Euler(0, 0, eulerZ));
+
+        lineCompleteTransform.GetComponent<NetworkObject>().Spawn(true);
+        _visualGameObjectsList.Add(lineCompleteTransform.gameObject);
     }
 
     private void GameManager_OnClickedGridPosition(object sender, GameManager.OnClickedOnGridPositionEventArgs e)
@@ -36,6 +92,7 @@ public class GameVisualManager : NetworkBehaviour
 
         var spawnedCrossTransform = Instantiate(prefab, GetGridWorldPosition(x, y), Quaternion.identity);
         spawnedCrossTransform.GetComponent<NetworkObject>().Spawn(true);
+        _visualGameObjectsList.Add(spawnedCrossTransform.gameObject);
     }
 
     private Vector2 GetGridWorldPosition(int x, int y)
