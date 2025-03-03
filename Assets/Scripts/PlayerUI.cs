@@ -23,9 +23,9 @@ public class PlayerUI : MonoBehaviour
 
     private void Start()
     {
-        GameManager.Instance.OnGameStarted += GameManager_OnGameStarted;
         GameManager.Instance.OnCurrentPlayablePlayerTypeChanged += GameManager_OnCurrentPlayablePlayerTypeChanged;
         GameManager.Instance.OnScoreChanged += GameManager_OnScoreChanged;
+        GameManager.Instance.OnGameStarted += GameManager_OnGameStarted;
     }
 
     private void GameManager_OnScoreChanged(object sender, System.EventArgs e)
@@ -51,7 +51,6 @@ public class PlayerUI : MonoBehaviour
         {
             _circleYouTextGameObject.SetActive(true);
         }
-
 
         _crossScoreTextMesh.text = "0";
         _circleScoreTextMesh.text = "0";
