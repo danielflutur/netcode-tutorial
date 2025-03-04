@@ -12,6 +12,7 @@ public class LobbyUI : MonoBehaviour
     [SerializeField] private Transform _container;
     [SerializeField] private TextMeshProUGUI _lobbyNameText;
     [SerializeField] private TextMeshProUGUI _playerCountText;
+    [SerializeField] private TextMeshProUGUI _joinCodeText;
     [SerializeField] private Button _leaveLobbyButton;
     [SerializeField] private Button _readyButton;
 
@@ -35,7 +36,6 @@ public class LobbyUI : MonoBehaviour
         LobbyManager.Instance.OnJoinedLobby += UpdateLobby_Event;
         LobbyManager.Instance.OnJoinedLobbyUpdate += UpdateLobby_Event;
         LobbyManager.Instance.OnLeftLobby += LobbyManager_OnLeftLobby;
-        LobbyManager.Instance.OnKickedFromLobby += LobbyManager_OnLeftLobby;
 
         Hide();
     }
@@ -76,6 +76,8 @@ public class LobbyUI : MonoBehaviour
 
         _lobbyNameText.text = lobby.Name;
         _playerCountText.text = lobby.Players.Count + "/" + lobby.MaxPlayers;
+        _joinCodeText.text = lobby.LobbyCode;
+        _readyButton.gameObject.SetActive(LobbyManager.Instance.IsLobbyHost());
 
         Show();
     }
@@ -97,10 +99,5 @@ public class LobbyUI : MonoBehaviour
     private void Show()
     {
         gameObject.SetActive(true);
-     
-        if (!LobbyManager.Instance.IsLobbyHost())
-        {
-            _readyButton.gameObject.SetActive(false);
-        }
     }
 }

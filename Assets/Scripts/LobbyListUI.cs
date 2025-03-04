@@ -12,6 +12,7 @@ public class LobbyListUI : MonoBehaviour
     [SerializeField] private Transform _container;
     [SerializeField] private Button _refreshButton;
     [SerializeField] private Button _createLobbyButton;
+    [SerializeField] private Button _joinLobbyButton;
 
     private void Awake()
     {
@@ -21,6 +22,7 @@ public class LobbyListUI : MonoBehaviour
 
         _refreshButton.onClick.AddListener(RefreshButtonClick);
         _createLobbyButton.onClick.AddListener(CreateLobbyButtonClick);
+        _joinLobbyButton.onClick.AddListener(JoinLobbyButtonClick);
     }
 
     private void Start()
@@ -28,12 +30,6 @@ public class LobbyListUI : MonoBehaviour
         LobbyManager.Instance.OnLobbyListChanged += LobbyManager_OnLobbyListChanged;
         LobbyManager.Instance.OnJoinedLobby += LobbyManager_OnJoinedLobby;
         LobbyManager.Instance.OnLeftLobby += LobbyManager_OnLeftLobby;
-        LobbyManager.Instance.OnKickedFromLobby += LobbyManager_OnKickedFromLobby;
-    }
-
-    private void LobbyManager_OnKickedFromLobby(object sender, LobbyManager.LobbyEventArgs e)
-    {
-        Show();
     }
 
     private void LobbyManager_OnLeftLobby(object sender, EventArgs e)
@@ -77,6 +73,11 @@ public class LobbyListUI : MonoBehaviour
     private void CreateLobbyButtonClick()
     {
         LobbyCreateUI.Instance.Show();
+    }
+
+    private void JoinLobbyButtonClick()
+    {
+        JoinLobbyUI.Instance.Show();
     }
 
     private void Hide()
