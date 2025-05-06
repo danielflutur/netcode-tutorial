@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
-using Unity.Mathematics;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.UIElements;
-using static GameManager;
 
 public class GameManager : NetworkBehaviour
 {
